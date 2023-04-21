@@ -1,0 +1,66 @@
+import json
+import dash
+import dash_core_components as dcc
+import dash_html_components as html
+import plotly.graph_objs as go
+from dash.dependencies import Input, Output, State
+
+app = dash.Dash(__name__)
+
+# read JSON file with cable line parameters
+with open('cable_line_params.json') as f:
+    cable_line_params = json.load(f)
+
+app.layout = html.Div([
+    html.H1('Cable Line Analysis'),
+    dcc.Tabs(id='tabs', value='tab-1', children=[
+        dcc.Tab(label='Cable Line Analysis', value='tab-1', children=[
+            html.Div([
+                html.H2('Cable Line Parameters'),
+                html.Div([
+                    html.Label('Capacity:'),
+                    dcc.Slider(id='cable-capacity-slider', min=cable_line_params['capacity_min'], max=cable_line_params['capacity_max'],
+                               step=cable_line_params['capacity_step'], value=cable_line_params['capacity_default'],
+                               marks={str(i): str(i) for i in range(cable_line_params['capacity_min'], cable_line_params['capacity_max']+1, cable_line_params['capacity_step'])}),
+                    html.Div(id='cable-capacity-output')
+                ], style={'width': '50%', 'display': 'inline-block', 'padding-right': '10px'}),
+                html.Div([
+                    html.Label('Length:'),
+                    dcc.Input(id='cable-length-input', type='number', value=cable_line_params['length_default']),
+                    html.Div(id='cable-length-output')
+                ], style={'width': '50%', 'display': 'inline-block'})
+            ]),
+            dcc.Graph(id='power-graph')
+        ]),
+        dcc.Tab(label='About', value='tab-2', children=[
+            html.H2('About'),
+            html.P('This is a demo app to showcase cable line analysis using Plotly and Dash.')
+        ])
+    ])
+])
+
+@app.callback(Output('cable-capacity-output', 'children'),
+              Input('cable-capacity-slider', 'value'))
+def update_capacity_output(value):
+    return f'Cable capacity: {value}'
+
+@app.callback(Output('cable-length-output', 'children'),
+              Input('cable-length-input', 'value'))
+def update_length_output(value):
+    return f'Cable length: {value}'
+
+@app.callback(Output('power-graph', 'figure'),
+              Input('cable-capacity-slider', 'value'),
+              State('cable-length-input', 'value'))
+def update_power_graph(capacity, length):
+    # calculate power data based on cable line parameters
+    # power = f(R, L, G, C, length)
+    # ...
+    # create Plotly figure with power data
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=[1, 2, 3], y=[4, 5, 6], mode='lines', name='Power'))
+    fig.update_layout(title=f'Power vs Cable Line Parameters (Cable capacity={capacity}, Cable length={length})')
+    return fig
+
+if __name__ == '__main__':
+    app.run_server(debug=True)
