@@ -10,7 +10,9 @@ class LaplaceDistribution:
         '''
         ####
         # Do not change the class outside of this block
-        # Your code here
+        median = np.median(x, axis=0)
+        deviation = np.abs(x - median)
+        return np.mean(deviation)
         ####
 
     def __init__(self, features):
@@ -20,8 +22,8 @@ class LaplaceDistribution:
         '''
         ####
         # Do not change the class outside of this block
-        self.loc = # YOUR CODE HERE
-        self.scale = # YOUR CODE HERE
+        self.loc = np.mean(features, axis=0)
+        self.scale = np.mean(np.abs(features - self.loc), axis=0)
         ####
 
 
@@ -33,7 +35,7 @@ class LaplaceDistribution:
         '''
         ####
         # Do not change the class outside of this block
-        return 
+        return -np.log(2 * self.scale) - np.abs(values - self.loc) / self.scale
         ####
         
     
