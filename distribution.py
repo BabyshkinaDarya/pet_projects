@@ -23,7 +23,7 @@ class LaplaceDistribution:
         ####
         # Do not change the class outside of this block
         self.loc = np.mean(features, axis=0)
-        self.scale = np.mean(np.abs(features - self.loc), axis=0)
+        self.scale = self.mean_abs_deviation_from_median(features)
         ####
 
 
@@ -36,6 +36,7 @@ class LaplaceDistribution:
         ####
         # Do not change the class outside of this block
         return -np.log(2 * self.scale) - np.abs(values - self.loc) / self.scale
+    
         ####
         
     
